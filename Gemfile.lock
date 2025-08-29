@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    minitest (5.25.5)
+
+PLATFORMS
+  arm64-darwin-23
+  ruby
+
+DEPENDENCIES
+  minitest (~> 5.25)
+
+RUBY VERSION
+   ruby 3.4.5p51
+
+BUNDLED WITH
+   2.6.9
