@@ -2,6 +2,9 @@ GEM
   remote: https://rubygems.org/
   specs:
     minitest (5.25.5)
+    rice (4.6.1)
+    torch-rb (0.21.0)
+      rice (>= 4.5)
 
 PLATFORMS
   arm64-darwin-23
@@ -9,6 +12,7 @@ PLATFORMS
 
 DEPENDENCIES
   minitest (~> 5.25)
+  torch-rb (~> 0.21.0)
 
 RUBY VERSION
    ruby 3.4.5p51
