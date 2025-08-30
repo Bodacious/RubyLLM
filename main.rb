@@ -1,8 +1,12 @@
 require 'bundler'
 Bundler.require(:default)
 
-corpus = "To be or not to be, that is the question"
-tokens = corpus.split
+require_relative "corpus"
+corpus = Corpus.new(
+  "To be or not to be, that is the question"
+)
+
+tokens = corpus.tokens
 
 freq = tokens.tally
 
