@@ -14,15 +14,26 @@ class UnigramWithSampling
     @probability_distributions = calculate_probability_distributions
   end
 
-  def generate(sequence_length = MAX_TOKENS)
-    Array.new(sequence_length) { generate_next_token }.join(" ")
+  def generate(sequence_length = MAX_TOKENS, strategy = :sample)
+    Array.new(sequence_length) { generate_next_token(strategy) }.join(" ")
   end
 
   protected
 
-  def generate_next_token
-    @probability_distributions.max_by(&:probability).token
+  def generate_next_token(strategy = :greedy)
+    sample(@probability_distributions).token
   end
+
+  def sample(distributions)
+    random = Random.rand
+    accumulator = 0.0
+    distributions.each do |token_probability|
+      accumulator += token_probability.probability
+      return token_probability if random <= accumulator
+    end
+    distributions.last
+  end
+
 
   def calculate_probability_distributions
     token_counts = CORPUS.tally
