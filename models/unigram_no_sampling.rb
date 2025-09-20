@@ -26,10 +26,10 @@ class UnigramNoSampling
 
   def calculate_probability_distributions
     token_counts = CORPUS.tally
-    total_token_count = token_counts.values.sum.to_f
+    total_token_count = token_counts.values.sum
     token_counts.map do |token, count|
-      probability = count / total_token_count
-      TokenProbability[token, probability]
+      probability = Rational(count, total_token_count)
+      TokenProbability[token, probability.to_f]
     end
   end
 end
