@@ -16,9 +16,11 @@ class UnigramNoSampling
   end
 
   def generate_next_token
-    @probability_distributions.sort_by do |(token_a,prob_a),(token_b, prob_b)|
+    sorted_distributions = @probability_distributions.sort_by do |(token_a,prob_a),(token_b, prob_b)|
       prob_b <=> prob_a
-    end.first.first
+    end
+    most_prevalent_token = sorted_distributions.first
+    most_prevalent_token.first
   end
 
   def calculate_probability_distributions
