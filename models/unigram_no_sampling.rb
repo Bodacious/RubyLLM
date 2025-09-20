@@ -12,10 +12,13 @@ class UnigramNoSampling
     @probability_distributions = calculate_probability_distributions
   end
   def generate(sequence_length = MAX_TOKENS)
-    generate_next_token = Proc.new do |(_token_a, prob_a), (_token_b, prob_b)|
-      @probability_distributions.sort_by { prob_b <=> prob_a }.first.first
-    end
-    sequence_length.times.map(&generate_next_token).join(" ")
+    sequence_length.times.map { generate_next_token }.join(" ")
+  end
+
+  def generate_next_token
+    @probability_distributions.sort_by do |(token_a,prob_a),(token_b, prob_b)|
+      prob_b <=> prob_a
+    end.first.first
   end
 
   def calculate_probability_distributions
