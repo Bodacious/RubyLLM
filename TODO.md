@@ -1,7 +1,7 @@
-TODO
-- [] Next-token prediction (what an LM does)
-  - [] Working model with a Unigram - no sampling
-  - [] Add some sampling to make it more interesting
+# TODO
+- [ ] Next-token prediction (what an LM does)
+  - [ ] Working model with a Unigram - no sampling
+  - [ ] Add some sampling to make it more interesting
 - [ ] Tokenisation (words→tokens)
   - [ ] Add spaces as a token
 - [ ] Context length with n-grams (uni→bi→tri)
