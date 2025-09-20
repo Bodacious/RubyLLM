@@ -15,31 +15,21 @@ class UnigramWithSampling
   end
 
   def generate(sequence_length = MAX_TOKENS)
-    sequence_length.times.map { generate_next_token }.join(" ")
+    Array.new(sequence_length) { generate_next_token }.join(" ")
   end
 
   protected
 
   def generate_next_token
-    sorted_distributions = @probability_distributions.sort_by(&:probability).reverse
-    most_prevalent_token = sorted_distributions.first
-    most_prevalent_token.token
+    @probability_distributions.max_by(&:probability).token
   end
 
   def calculate_probability_distributions
+    token_counts = CORPUS.tally
+    total_token_count = token_counts.values.sum
     token_counts.map do |token, count|
-      probability = count / total_token_count
-      TokenProbability[token, probability]
+      probability = Rational(count, total_token_count)
+      TokenProbability[token, probability.to_f]
     end
-  end
-
-  def total_token_count = token_counts.values.sum.to_f
-
-  def token_counts
-    return @token_counts if defined? @token_counts
-
-    counts = Hash.new(0)
-    CORPUS.each { |tok| counts[tok] += 1 }
-    counts
   end
 end
