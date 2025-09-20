@@ -27,12 +27,19 @@ class UnigramNoSampling
   end
 
   def calculate_probability_distributions
-    counts = Hash.new(0)
-    CORPUS.each { |tok| counts[tok] += 1 }
-    total = counts.values.sum.to_f
-    counts.map do |token, count|
-      probability = count / total
+    token_counts.map do |token, count|
+      probability = count / total_token_count
       TokenProbability[token, probability]
     end
+  end
+
+  def total_token_count = token_counts.values.sum.to_f
+
+  def token_counts
+    return @token_counts if defined? @token_counts
+
+    counts = Hash.new(0)
+    CORPUS.each { |tok| counts[tok] += 1 }
+    counts
   end
 end
