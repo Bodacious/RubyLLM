@@ -27,7 +27,7 @@ class BigramNoSampling
     output = [prompt.downcase]
 
     until output.last.nil?
-      break if output.length > sequence_length
+      break if output.length >= sequence_length
       context = output.last
       next_token = generate_next_token(context)
       output << next_token
