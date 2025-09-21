@@ -3,6 +3,8 @@
 require 'bundler'
 require_relative "../lib/probability_distribution"
 require_relative "../lib/corpus"
+require_relative "../lib/next_token_generator"
+
 Bundler.setup(:development)
 
 class TrigramLargeCorpus
@@ -11,15 +13,13 @@ class TrigramLargeCorpus
   MAX_TOKENS = 10
   NGRAM_SIZE = 3
 
-
-
   def initialize
-    corpus = Corpus.new(name: :simple)
+    corpus = Corpus.new(name: :frankenstein)
     @probability_distributions = ProbabilityDistribution.new(samples: corpus.samples, n: 3)
   end
 
   def generate(prompt: nil, sequence_length: MAX_TOKENS)
-    output = [BOS, prompt.to_s.downcase]
+    output = [BOS, *prompt.to_s.downcase.split]
 
     until output.last.nil?
       break if output.last == EOS
@@ -37,14 +37,7 @@ class TrigramLargeCorpus
 
   def generate_next_token(context)
     lookback_context = context.last(NGRAM_SIZE - 1)
-    ngrams_sorted_by_probability  = @probability_distributions
-                                       .filter { |ngram_prob| ngram_prob.ngram.start_with?(lookback_context) }
-                                       # Sort by probability DESC, precedence ASC
-                                       .sort_by
-                                       .with_index{ |ngram_prob, i| [ngram_prob.probability, i] }
-    highest_probability_ngram = ngrams_sorted_by_probability.first
-
-    return nil if highest_probability_ngram.nil?
-    highest_probability_ngram.ngram.last_token
+    NextTokenGenerator.new(context: lookback_context,
+                           probability_distributions: @probability_distributions).generate
   end
 end
