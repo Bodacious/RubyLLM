@@ -13,7 +13,7 @@ class BigramNoSampling
       tokens.first == token
     end
 
-    def last_word
+    def last_token
       tokens.last
     end
   end
@@ -24,7 +24,7 @@ class BigramNoSampling
   end
 
   def generate(prompt: nil, sequence_length: MAX_TOKENS)
-    output = [prompt.downcase]
+    output = [prompt.to_s.downcase]
 
     until output.last.nil?
       break if output.length >= sequence_length
@@ -39,14 +39,15 @@ class BigramNoSampling
   protected
 
   def generate_next_token(context)
-    highest_probability_bigram = @probability_distributions
+    bigrams_sorted_by_probability  = @probability_distributions
                                    .filter { |bigram_prob| bigram_prob.bigram.start_with?(context) }
+                                   # Sort by probability DESC, precedence ASC
                                    .sort_by
-                                   .with_index{ |bigram_prob, i| [-bigram_prob.probability, -i] }
-                                   .reverse
-                                   .first
+                                   .with_index{ |bigram_prob, i| [bigram_prob.probability, i] }
+    highest_probability_bigram = bigrams_sorted_by_probability.first
     return nil if highest_probability_bigram.nil?
-    highest_probability_bigram.bigram.last_word
+
+    highest_probability_bigram.bigram.last_token
   end
 
   def calculate_probability_distributions
