@@ -5,9 +5,13 @@ require 'bundler'
 Bundler.setup(:development)
 
 class TrigramNoSampling
-  CORPUS = "[BOS] the cat sat on the mat [EOS]".split
+  BOS = "[BOS]"
+  EOS = "[EOS]"
+  CORPUS = "#{BOS} the cat sat on the mat #{EOS}".split
+
   MAX_TOKENS = 10
   NGRAM_SIZE = 3
+
   NGram = Data.define(:tokens) do
     def start_with?(lookback_context)
       tokens.first(lookback_context.size) == lookback_context
@@ -24,16 +28,17 @@ class TrigramNoSampling
   end
 
   def generate(prompt: nil, sequence_length: MAX_TOKENS)
-    output = ['[BOS]', prompt.to_s.downcase]
+    output = [BOS, prompt.to_s.downcase]
 
     until output.last.nil?
+      break if output.last == EOS
       break if output.length >= sequence_length
       context = output.last(NGRAM_SIZE)
       next_token = generate_next_token(context)
       output << next_token
     end
-    output.delete('[BOS]')
-    output.delete('[EOS]')
+    output.delete(BOS)
+    output.delete(EOS)
     output.compact.join(" ")
   end
 
