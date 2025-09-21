@@ -20,11 +20,11 @@ class TrigramNoSamplingTest < Minitest::Test
     assert_equal "the cat sat on the mat", sample_text
   end
 
-  def test_returns_best_fit_match_when_word_is_not_beginning
+  def test_returns_only_prompt_when_not_first_word
     model = TrigramNoSampling.new
 
     sample_text = model.generate(prompt: "cat", sequence_length: 100)
-    skip "This test fails because we added BOS"
-    assert_equal "cat sat on the mat", sample_text
+
+    assert_equal "cat", sample_text
   end
 end
