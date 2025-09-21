@@ -2,19 +2,20 @@
 
 require 'bundler'
 require_relative "../lib/probability_distribution"
-
+require_relative "../lib/corpus"
 Bundler.setup(:development)
 
 class TrigramLargeCorpus
   BOS = "[BOS]"
   EOS = "[EOS]"
-  CORPUS = "#{BOS} the cat sat on the mat #{EOS}"
-
   MAX_TOKENS = 10
   NGRAM_SIZE = 3
 
+
+
   def initialize
-    @probability_distributions = ProbabilityDistribution.new(samples: [CORPUS], n: 3)
+    corpus = Corpus.new(name: :simple)
+    @probability_distributions = ProbabilityDistribution.new(samples: corpus.samples, n: 3)
   end
 
   def generate(prompt: nil, sequence_length: MAX_TOKENS)
