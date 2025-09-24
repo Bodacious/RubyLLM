@@ -4,7 +4,8 @@ source "https://rubygems.org"
 
 ruby file: "./.ruby-version"
 
-gem "torch-rb", "~> 0.21.0"
+gem "pycall", "~> 1.5"
+gem "fiddle", "~> 1.1"
 
 group :development, :test do
   gem "debug"
