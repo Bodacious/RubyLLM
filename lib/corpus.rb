@@ -1,6 +1,4 @@
 class Corpus
-  BOS = "[BOS]"
-  EOS = "[EOS]"
   SENTENCE_REGEXP = /[^.!?]+(?:\s+|\.|!|\?|$)/
 
   IGNORED_PUNCTUATION_REGEXP = /'|"|”/
@@ -22,6 +20,5 @@ class Corpus
       string
     end
         .select { |sentence| sentence.length > 1 }
-        .map { |sentence| "#{BOS} #{sentence} #{EOS}" }
   end
 end

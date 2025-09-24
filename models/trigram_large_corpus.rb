@@ -19,7 +19,7 @@ class TrigramLargeCorpus
   end
 
   def generate(prompt: nil, sequence_length: MAX_TOKENS)
-    output = [BOS, *prompt.to_s.downcase.split]
+    output = [BOS, *prompt.to_s.downcase.chars]
 
     until output.last.nil?
       break if output.last == EOS
@@ -30,7 +30,7 @@ class TrigramLargeCorpus
     end
     output.delete(BOS)
     output.delete(EOS)
-    output.compact.join(" ")
+    output.compact.join
   end
 
   protected
