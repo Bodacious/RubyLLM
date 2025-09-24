@@ -19,7 +19,7 @@ class Tiktoken
     Array(@tokenizer.encode(text))
   end
 
-  def decode(*tokens)
-    @tokenizer.decode(*tokens)
+  def decode(tokens)
+    @tokenizer.decode(tokens)
   end
 end

@@ -9,11 +9,10 @@ class ProbabilityDistribution < DelegateClass(Array)
   EOS = "[EOS]"
 
   def initialize(samples: [], n: 1)
+    tokenizer = Tiktoken.new
     @ngrams = Array(samples).flat_map do |sample|
-      sample_chars = sample.chars
-      sample_chars.unshift(BOS)
-      sample_chars.push(EOS)
-      sample_chars.each_cons(n).map { |tokens| NGram[tokens] }
+      sample_tokens = tokenizer.encode(sample)
+      sample_tokens.each_cons(n).map { |tokens| NGram[tokens] }
     end
     ngram_probabilities = calculate_probabilities_for_ngrams_in_samples
 

@@ -7,7 +7,7 @@ class TrigramLargeCorpusTest < Minitest::Test
   def test_returns_sensible_content
     model = TrigramLargeCorpus.new
 
-    sample_text = model.generate(prompt: "I am")
+    sample_text = model.generate(prompt: "I cannot pretend to describe")
 
     assert_equal "i am alone.", sample_text
     refute_empty sample_text
