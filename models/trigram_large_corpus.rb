@@ -9,35 +9,41 @@ require_relative "../lib/tiktoken"
 Bundler.setup(:development)
 
 class TrigramLargeCorpus
-  MAX_TOKENS = 1_000
-  NGRAM_SIZE = 3
+  MAX_TOKENS = 200
+  NGRAM_SIZE = 5
 
   def initialize
     corpus = Corpus.new(name: :frankenstein)
+    @tokenizer = Tokenizer.new
     @probability_distributions = ProbabilityDistribution.new(
-      samples: corpus.samples,
+      tokens: corpus.samples.flat_map { |sample| @tokenizer.tokenize(sample) },
       n: NGRAM_SIZE
     )
   end
 
   def generate(prompt: nil, sequence_length: MAX_TOKENS)
-    tokenizer = Tiktoken.new
-    output = tokenizer.encode(prompt)
-
+    output = @tokenizer.tokenize("#{Tokenizer::BOS} #{prompt.downcase}")
+    eos_size = Tokenizer::eos_tokens.size
     until output.last.nil?
+      break if output.last(eos_size) == Tokenizer::eos_tokens
       break if output.length >= sequence_length
       context = output.last(NGRAM_SIZE)
       next_token = generate_next_token(context)
       output << next_token
     end
-    tokenizer.decode(output.compact)
+    string = @tokenizer.detokenize(output.compact)
+    string.delete!(Tokenizer::BOS)
+    string.delete!(Tokenizer::EOS)
+    string.strip
   end
 
   protected
 
   def generate_next_token(context)
     lookback_context = context.last(NGRAM_SIZE - 1)
-    NextTokenGenerator.new(context: lookback_context,
-                           probability_distributions: @probability_distributions).generate
+    NextTokenGenerator.new(
+      context: lookback_context,
+      probability_distributions: @probability_distributions
+    ).generate
   end
 end

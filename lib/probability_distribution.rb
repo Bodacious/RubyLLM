@@ -5,15 +5,9 @@ class ProbabilityDistribution < DelegateClass(Array)
   require_relative "../lib/ngram"
   require_relative "../lib/ngram_probability"
 
-  BOS = "[BOS]"
-  EOS = "[EOS]"
+  def initialize(tokens: [], n: 1)
+    @ngrams = Array(tokens).each_cons(n).map { |n_tokens| NGram[n_tokens] }
 
-  def initialize(samples: [], n: 1)
-    tokenizer = Tiktoken.new
-    @ngrams = Array(samples).flat_map do |sample|
-      sample_tokens = tokenizer.encode(sample)
-      sample_tokens.each_cons(n).map { |tokens| NGram[tokens] }
-    end
     ngram_probabilities = calculate_probabilities_for_ngrams_in_samples
 
     super(ngram_probabilities)

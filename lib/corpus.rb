@@ -1,7 +1,10 @@
 class Corpus
-  SENTENCE_REGEXP = /[^.!?]+(?:\s+|\.|!|\?|$)/
+  require_relative 'tokenizer'
 
-  IGNORED_PUNCTUATION_REGEXP = /'|"|”/
+  SENTENCE_REGEXP = /(?m)[\s\S]*?[.!?](?=\s|$)/
+
+
+  IGNORED_PUNCTUATION_REGEXP = /'|"|“|”|\r?\n/
 
   def initialize(name: :simple)
     @name = name.to_sym
@@ -12,13 +15,12 @@ class Corpus
 
   def read_corpus_file
     File.read("./corpora/#{@name}_text.txt")
-        .scan(SENTENCE_REGEXP)
+        .each_line
         .map do |string|
-      string.downcase!
-      string.strip!
       string.gsub!(IGNORED_PUNCTUATION_REGEXP, '')
       string
     end
-        .select { |sentence| sentence.length > 1 }
+        .select { |sentence| sentence.strip.length > 1 }
+      .map { |sentence| "#{Tokenizer::BOS} #{sentence.downcase} #{Tokenizer::EOS}" }
   end
 end

@@ -1,6 +1,6 @@
 require 'bundler'
 
-Bundler.setup(:development, :test)
+Bundler.setup(:default, :development, :test)
 
 require 'minitest/autorun'
 

@@ -16,7 +16,7 @@ class TrigramLargeCorpusTest < Minitest::Test
   def test_returns_sensible_content_when_prompt_is_These
     model = TrigramLargeCorpus.new
 
-    sample_text = model.generate(prompt: "These", sequence_length: 100)
+    sample_text = model.generate(prompt: "I don't want to")
 
     assert_equal <<~STRING.chomp, sample_text
       these motives urged me forward; i seemed to forget those friends who \
@@ -29,7 +29,7 @@ class TrigramLargeCorpusTest < Minitest::Test
   def test_returns_sensible_content_when_prompt_is_night
     model = TrigramLargeCorpus.new
 
-    sample_text = model.generate(prompt: "and when I left", sequence_length: 100)
+    sample_text = model.generate(prompt: "and when I left")
 
     # THIS IS COMPLETELY GENERATED CONTENT!
     assert_equal "and when i left him incredulous to the vessel.", sample_text
