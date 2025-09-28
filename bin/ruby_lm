@@ -5,4 +5,5 @@ $LOAD_PATH << File.expand_path('../models', __dir__)
 
 require 'trigram_large_corpus'
 
-puts TrigramLargeCorpus.new.generate(prompt: ARGV[0], sequence_length: ARGV[1].to_i)
+sequence_length = ARGV[1].nil? ? 10_000 : ARGV[1].to_i
+puts TrigramLargeCorpus.new.generate(prompt: ARGV[0], sequence_length: sequence_length)
