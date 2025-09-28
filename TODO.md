@@ -1,14 +1,14 @@
 # TODO
 - [ ] Next-token prediction (what an LM does)
   - [X] Working model with a Unigram - no sampling
-- [ ] Context length with n-grams (uni→bi→tri)
-  - [ ] include BOS/EOS and “corpus”
-  - [ ] Bigram model with no sampling
-  - [ ] Trigram model with no sampling
+- [X] Context length with n-grams (uni→bi→tri)
+  - [X] include BOS/EOS and “corpus”
+  - [X] Bigram model with no sampling
+  - [X] Trigram model with no sampling
   - [ ] Add some sampling to make it more interesting
 - [ ] Tokenisation (words→tokens)
-  - [ ] Add spaces as a token
-- [ ] Probability distributions (show next_probs)
+  - [X] Add spaces as a token
+- [X] Probability distributions (show next_probs)
 - [ ] Sampling strategies (greedy, temperature, top-k, top-p)
 - [ ] Perplexity (lower = better)
 - [ ] Limits of n-grams (sparsity, fixed window)
