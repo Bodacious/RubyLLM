@@ -4,7 +4,7 @@ require_relative 'ngram'
 require_relative 'ngram_model'
 require_relative 'conditional_distribution'
 
-class ProbabilityDistribution
+class NGramModelBuilder
   def initialize(tokens:, n: 3)
     @n = n
     @vocab = tokens.uniq

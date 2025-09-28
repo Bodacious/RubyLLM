@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'bundler'
-require_relative '../lib/probability_distribution'
+require_relative '../lib/n_gram_model_builder'
 require_relative '../lib/corpus'
 require_relative '../lib/next_token_generator'
 require_relative '../lib/word_tokenizer'
@@ -16,7 +16,7 @@ class TrigramLargeCorpus
   def initialize
     corpus = Corpus.new(name: :frankenstein)
     @tokenizer = BPETokenizer.new
-    probability_distribution = ProbabilityDistribution.new(
+    probability_distribution = NGramModelBuilder.new(
       tokens: corpus.samples.flat_map { |sample| @tokenizer.tokenize(sample) },
       n: NGRAM_SIZE
     )
@@ -32,7 +32,7 @@ class TrigramLargeCorpus
       break if output.last(eos_size) == @tokenizer.eos_tokens
       break if output.length >= sequence_length
 
-      context = output.last(NGRAM_SIZE)
+      context = output.last(NGRAM_SIZE  - 1)
       next_token = generate_next_token(context)
       output << next_token
     end
@@ -45,7 +45,7 @@ class TrigramLargeCorpus
   protected
 
   def generate_next_token(context)
-    lookback_context = context.last(NGRAM_SIZE - 1)
+    lookback_context = context.last(NGRAM_SIZE)
     @next_token_generator.generate_next(context: lookback_context)
   end
 end
