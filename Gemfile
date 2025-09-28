@@ -19,3 +19,5 @@ group  :test do
   gem "mocha"
   gem "minitest", "~> 5.25"
 end
+
+gem "rake", "~> 13.3"
