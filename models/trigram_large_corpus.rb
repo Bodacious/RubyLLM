@@ -10,8 +10,9 @@ require_relative '../lib/bpe_tokenizer'
 Bundler.setup(:development)
 
 class TrigramLargeCorpus
-  MAX_TOKENS = 200
+  MAX_TOKENS = 10_000
   NGRAM_SIZE = 3
+
 
   def initialize
     corpus = Corpus.new(name: :frankenstein)

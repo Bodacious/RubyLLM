@@ -3,15 +3,19 @@
 class ConditionalDistribution
   def initialize(context:, token_probs:)
     @context = context
-    @token_probs = token_probs
+    @token_probs = token_probs # { NGram => Float (probability) }
   end
 
   attr_reader :context
 
   def next_token
-    return nil if @token_probs.empty?
-
-    @token_probs.max_by { |_, prob| prob }.first.last_token
+    r = rand
+    cumulative = 0.0
+    @token_probs.each do |ngram, prob|
+      cumulative += prob
+      return ngram.last_token if r <= cumulative
+    end
+    @token_probs.keys.last
   end
 
   def [](token)
