@@ -112,7 +112,6 @@ DEPENDENCIES
   fiddle (~> 1.1)
   guard
   guard-minitest
-  logger
   minitest (~> 5.25)
   mocha
   pycall (~> 1.5)

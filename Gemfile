@@ -12,8 +12,6 @@ gem "fiddle", "~> 1.1", require: false
 group :development, :test do
   # Debugging functionality for Ruby (https://github.com/ruby/debug)
   gem "debug"
-  # Provides a simple logging utility for outputting messages. (https://github.com/ruby/logger)
-  gem "logger"
   # Guard keeps an eye on your file modifications (https://guard.github.io/guard/)
   gem "guard"
   # Guard plugin for the Minitest framework (https://rubygems.org/gems/guard-minitest)
