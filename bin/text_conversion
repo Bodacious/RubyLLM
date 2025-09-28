@@ -1,0 +1,23 @@
+#!/usr/bin/env ruby
+# split_story_into_sentences.rb
+# Usage: ruby split_story_into_sentences.rb path/to/story.txt
+
+input_path = ARGV[0] or abort "Usage: ruby #{$0} ./corpora/frankenstein_text_old.txt"
+output_path = "./corpora/frankenstein_text.txt"
+
+# Read and normalise whitespace
+text = File.read(input_path, encoding: "UTF-8")
+text.gsub!(/\r\n?/, "\n")                     # normalise line endings
+text.gsub!(/\s+/, " ")                        # collapse all whitespace to single spaces
+text.strip!
+
+# Split into sentences (naive but works well for prose)
+sentences = text.scan(/[^.!?]+[.!?]/).map(&:strip)
+
+Dir.mkdir("./corpora") unless Dir.exist?("./corpora")
+
+File.open(output_path, "w", encoding: "UTF-8") do |f|
+  sentences.each { |sentence| f.puts(sentence) }
+end
+
+puts "Wrote #{sentences.size} sentences to #{output_path}"

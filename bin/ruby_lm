@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH << File.expand_path("../models", __dir__)
+
+require 'trigram_large_corpus'
+
+puts TrigramLargeCorpus.new.generate(prompt: ARGV[0], sequence_length: ARGV[1].to_i)

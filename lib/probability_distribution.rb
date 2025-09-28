@@ -1,5 +1,6 @@
 
 require "delegate"
+
 class ProbabilityDistribution < DelegateClass(Array)
   require 'rational'
   require_relative "../lib/ngram"
@@ -20,7 +21,7 @@ class ProbabilityDistribution < DelegateClass(Array)
     total_ngrams_count = ngram_counts.values.sum
     ngram_counts.map do |ngram, count|
       probability = Rational(count, total_ngrams_count)
-      NGramProbability[ngram, probability.to_f]
+      NGramProbability[ngram, probability]
     end
   end
 end

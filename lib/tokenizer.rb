@@ -1,26 +1,28 @@
 class Tokenizer
-  require "pycall/import"
-  include PyCall::Import
-  require "forwardable"
-  extend Forwardable
-
   BOS = '!!!'
   EOS = '``'
 
-  def initialize(encoding: "cl100k_base")
-    pyimport :tiktoken
-    @encoder = tiktoken.get_encoding(encoding)
+  def bos
+    self.class::BOS
   end
 
-  def self.eos_tokens(...)
-    new(...).tokenize(EOS)
+  def eos
+    self.class::EOS
+  end
+
+  def bos_tokens
+    tokenize(bos)
+  end
+
+  def eos_tokens
+    tokenize(eos)
   end
 
   def tokenize(text)
-    Array(@encoder.encode(text))
+    raise NotImplementedError
   end
 
   def detokenize(tokens)
-    @encoder.decode(tokens)
+    raise NotImplementedError
   end
 end
