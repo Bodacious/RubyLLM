@@ -1,59 +1,36 @@
-# test_next_token_generator.rb
-require "test_helper"
+# test/next_token_generator_test.rb
+# frozen_string_literal: true
 
-require "next_token_generator"
+require "minitest/autorun"
+require "mocha/minitest"
+require_relative "../../lib/next_token_generator"
 
 class NextTokenGeneratorTest < Minitest::Test
-  def test_generate_next_returns_last_token_of_highest_probability_ngram
-    ngram_mock = mock("NGram") # 1,2,3,4
-    ngram_mock.stubs(:start_with?).with([1,2,3]).returns(true)
-    ngram_mock.stubs(:last_token).returns(4)
+  def test_generate_next_returns_nil_when_distribution_has_no_tokens
+    empty_distribution = mock("ConditionalDistribution")
+    empty_distribution.stubs(:tokens).returns([])
+    empty_distribution.expects(:next_token).never
 
-    ngram_prob_mock = mock("NGramProbability")
-    ngram_prob_mock.stubs(:ngram).returns(ngram_mock)
-    ngram_prob_mock.stubs(:probability).returns(0.9)
+    probability_distribution = mock("ProbabilityDistribution")
+    probability_distribution.stubs(:distribution_for).with(%w[foo bar]).returns(empty_distribution)
 
-    generator = NextTokenGenerator.new(probability_distributions: [ngram_prob_mock])
+    generator = NextTokenGenerator.new(probability_distribution: probability_distribution)
+    result = generator.generate_next(context: %w[foo bar])
 
-    result = generator.generate_next(context: [1,2,3])
-
-    assert_equal 4, result
+    assert_nil result
   end
 
-  def test_generate_next_returns_terminating_token_when_no_match
-    skip "rethink this."
-    eos_token = 1000
-    Tokenizer.stubs(:eos_tokens).returns([1000])
+  def test_generate_next_returns_next_token_when_tokens_exist
+    distribution = mock("ConditionalDistribution")
+    distribution.stubs(:tokens).returns(%w[baz])
+    distribution.stubs(:next_token).returns("baz")
 
-    # Stub NGramProbability.new for TERMINATING_NGRAM_PROBABILITY
-    ngram_mock = mock("NGram")
-    ngram_mock.stubs(:start_with?).returns(false)
-    ngram_mock.stubs(:last_token).returns(1000)
+    probability_distribution = mock("ProbabilityDistribution")
+    probability_distribution.stubs(:distribution_for).with(%w[foo bar]).returns(distribution)
 
-    terminating_prob = mock("NGramProbability")
-    terminating_prob.stubs(:ngram).returns(ngram_mock)
+    generator = NextTokenGenerator.new(probability_distribution: probability_distribution)
+    result = generator.generate_next(context: %w[foo bar])
 
-    generator = NextTokenGenerator.new(probability_distributions: [])
-    result = generator.generate_next(context: "foo")
-
-    assert_equal eos_token, result
-  end
-
-  def test_probability_distributions_are_sorted_on_initialization
-    low_prob = mock("NGramProbability (low prob)")
-    low_prob.stubs(:probability).returns(0.1)
-    low_prob.stubs(:ngram).returns(
-      mock('NGram (low prob)', start_with?: true)
-    )
-
-    high_prob = mock("NGramProbability (high prob)")
-    high_prob.stubs(:probability).returns(0.9)
-    high_prob.stubs(:ngram).returns(
-      mock('NGram (high prob)', start_with?: true, last_token: 1000)
-    )
-
-    generator = NextTokenGenerator.new(probability_distributions: [low_prob, high_prob])
-
-    assert_equal 1000, generator.generate_next(context: 100)
+    assert_equal "baz", result
   end
 end
