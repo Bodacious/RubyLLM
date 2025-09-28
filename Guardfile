@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 guard :minitest do
   # When a test file itself changes, rerun it
   watch(%r{^test/(.+)_test\.rb$})

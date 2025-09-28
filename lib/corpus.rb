@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 class Corpus
   require_relative 'tokenizer'
 
   SENTENCE_REGEXP = /(?m)[\s\S]*?[.!?](?=\s|$)/
-
 
   IGNORED_PUNCTUATION_REGEXP = /'|"|“|”|\r?\n/
 
@@ -21,6 +22,6 @@ class Corpus
       string
     end
         .select { |sentence| sentence.strip.length > 1 }
-      .map { |sentence| "#{Tokenizer::BOS} #{sentence.downcase}#{Tokenizer::EOS}" }
+        .map { |sentence| "#{Tokenizer::BOS} #{sentence.downcase}#{Tokenizer::EOS}" }
   end
 end

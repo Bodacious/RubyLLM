@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'tokenizer'
 class WordTokenizer < Tokenizer
   def tokenize(text)
@@ -5,6 +7,6 @@ class WordTokenizer < Tokenizer
   end
 
   def detokenize(tokens)
-    tokens.join(" ")
+    tokens.join(' ')
   end
 end

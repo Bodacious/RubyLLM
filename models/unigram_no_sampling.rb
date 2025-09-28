@@ -5,7 +5,7 @@ require 'bundler'
 Bundler.setup(:development)
 
 class UnigramNoSampling
-  CORPUS = "the cat sat on the mat".split
+  CORPUS = 'the cat sat on the mat'.split
   MAX_TOKENS = 10
 
   TokenProbability = Data.define(:token, :probability)
@@ -15,7 +15,7 @@ class UnigramNoSampling
   end
 
   def generate(sequence_length = MAX_TOKENS)
-    Array.new(sequence_length) { generate_next_token }.join(" ")
+    Array.new(sequence_length) { generate_next_token }.join(' ')
   end
 
   protected

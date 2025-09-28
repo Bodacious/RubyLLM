@@ -5,7 +5,7 @@ require 'bundler'
 Bundler.setup(:development)
 
 class BigramNoSampling
-  CORPUS = "the cat sat on the mat".split
+  CORPUS = 'the cat sat on the mat'.split
   MAX_TOKENS = 10
 
   Bigram = Data.define(:tokens) do
@@ -28,22 +28,23 @@ class BigramNoSampling
 
     until output.last.nil?
       break if output.length >= sequence_length
+
       context = output.last
       next_token = generate_next_token(context)
       output << next_token
     end
 
-    output.compact.join(" ")
+    output.compact.join(' ')
   end
 
   protected
 
   def generate_next_token(context)
-    bigrams_sorted_by_probability  = @probability_distributions
-                                   .filter { |bigram_prob| bigram_prob.bigram.start_with?(context) }
-                                   # Sort by probability DESC, precedence ASC
-                                   .sort_by
-                                   .with_index{ |bigram_prob, i| [bigram_prob.probability, i] }
+    bigrams_sorted_by_probability = @probability_distributions
+                                    .filter { |bigram_prob| bigram_prob.bigram.start_with?(context) }
+                                    # Sort by probability DESC, precedence ASC
+                                    .sort_by
+                                    .with_index { |bigram_prob, i| [bigram_prob.probability, i] }
     highest_probability_bigram = bigrams_sorted_by_probability.first
     return nil if highest_probability_bigram.nil?
 
