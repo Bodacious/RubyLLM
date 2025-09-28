@@ -15,6 +15,7 @@ class BPETokenizer < Tokenizer
   end
 
   def detokenize(tokens)
+    # puts "tokens: #{tokens}"
     @encoder.decode(tokens)
   end
 end

@@ -3,7 +3,7 @@
 class ConditionalDistribution
   def initialize(context:, token_probs:)
     @context = context
-    @token_probs = token_probs # { token => Float (probability) }
+    @token_probs = token_probs # { NGram => Float (probability) }
   end
 
   attr_reader :context

@@ -25,6 +25,7 @@ class Tokenizer
   end
 
   def detokenize(tokens)
+    puts "Tokens: #{tokens}"
     raise NotImplementedError
   end
 end

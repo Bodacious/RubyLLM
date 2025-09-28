@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'ngram'
-require_relative 'ngram_probability'
+require_relative 'ngram_model'
 require_relative 'conditional_distribution'
 
 class ProbabilityDistribution
@@ -20,9 +20,6 @@ class ProbabilityDistribution
   def build_distributions(tokens)
     # A list of all unique NGrams in the training documents
     ngrams = tokens.each_cons(@n).map { |arr| NGram[arr] }
-    # All unique NGrams, grouped by their context
-    # { ['token_a', 'token_b'] => [Ngram1, NGram2, NGram3] }
-    grouped = ngrams.group_by(&:context)
-    NGramModel.build(contexts_with_ngrams: grouped)
+    NGramModel.build(ngrams: ngrams)
   end
 end

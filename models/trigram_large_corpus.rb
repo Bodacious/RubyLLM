@@ -13,7 +13,6 @@ class TrigramLargeCorpus
   MAX_TOKENS = 10_000
   NGRAM_SIZE = 3
 
-
   def initialize
     corpus = Corpus.new(name: :frankenstein)
     @tokenizer = BPETokenizer.new

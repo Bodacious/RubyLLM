@@ -5,18 +5,19 @@ require_relative '../../models/trigram_large_corpus'
 
 class TrigramLargeCorpusTest < Minitest::Test
   def test_returns_sensible_content
-    srand(60886)
+    srand(60_886)
 
     model = TrigramLargeCorpus.new
 
     sample_text = model.generate(prompt: 'I cannot pretend to describe')
 
-    assert_equal 'i cannot pretend to describe what i shall not escape, that the discovery of the charming arabian.', sample_text
+    assert_equal 'i cannot pretend to describe what i shall not escape, that the discovery of the charming arabian.',
+                 sample_text
     refute_empty sample_text
   end
 
   def test_returns_sensible_content_when_prompt_is_a_few_common_words
-    srand(60886)
+    srand(60_886)
     model = TrigramLargeCorpus.new
 
     sample_text = model.generate(prompt: 'and my first of those')
