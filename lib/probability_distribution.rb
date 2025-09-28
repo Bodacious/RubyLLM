@@ -1,27 +1,32 @@
+# frozen_string_literal: true
 
-require "delegate"
+require_relative "ngram"
+require_relative "ngram_probability"
+require_relative "conditional_distribution"
 
-class ProbabilityDistribution < DelegateClass(Array)
-  require 'rational'
-  require_relative "../lib/ngram"
-  require_relative "../lib/ngram_probability"
-
-  def initialize(tokens: [], n: 1)
-    @ngrams = Array(tokens).each_cons(n).map { |n_tokens| NGram[n_tokens] }
-
-    ngram_probabilities = calculate_probabilities_for_ngrams_in_samples
-
-    super(ngram_probabilities)
+class ProbabilityDistribution
+  def initialize(tokens:, n: 3)
+    @n = n
+    @vocab = tokens.uniq
+    @distributions = build_distributions(tokens)
   end
 
-  protected
+  def distribution_for(context)
+    @distributions[context] || ConditionalDistribution.new(context: context, token_probs: {})
+  end
 
-  def calculate_probabilities_for_ngrams_in_samples
-    ngram_counts = @ngrams.tally
-    total_ngrams_count = ngram_counts.values.sum
-    ngram_counts.map do |ngram, count|
-      probability = Rational(count, total_ngrams_count)
-      NGramProbability[ngram, probability]
+  private
+
+  def build_distributions(tokens)
+    ngrams = tokens.each_cons(@n).map { |arr| NGram[arr] }
+    grouped = ngrams.group_by(&:context)
+
+    grouped.transform_values do |ngrams_for_context|
+      total = ngrams_for_context.size.to_f
+      counts = ngrams_for_context.tally { |ngram| ngram.next_token }
+      token_probs = counts.transform_values { |c| c / total }
+
+      ConditionalDistribution.new(context: ngrams_for_context.first.context, token_probs: token_probs)
     end
   end
 end

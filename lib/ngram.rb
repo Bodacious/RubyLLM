@@ -1,6 +1,10 @@
 NGram = Data.define(:tokens) do
-  def start_with?(lookback_context)
-    tokens.first(lookback_context.size) == lookback_context
+  def context
+    tokens[0...-1]
+  end
+
+  def start_with?(prefix)
+    context.first(prefix.size) == prefix
   end
 
   def last_token

@@ -16,12 +16,12 @@ class TrigramLargeCorpus
   def initialize
     corpus = Corpus.new(name: :frankenstein)
     @tokenizer = BPETokenizer.new
-    probability_distributions = ProbabilityDistribution.new(
+    probability_distribution = ProbabilityDistribution.new(
       tokens: corpus.samples.flat_map { |sample| @tokenizer.tokenize(sample) },
       n: NGRAM_SIZE
     )
     @next_token_generator = NextTokenGenerator.new(
-      probability_distributions: probability_distributions
+      probability_distribution: probability_distribution
     )
   end
 

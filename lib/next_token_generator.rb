@@ -1,18 +1,14 @@
-class NextTokenGenerator
-  require_relative "ngram"
-  require_relative "ngram_probability"
-  require_relative 'tokenizer'
+# frozen_string_literal: true
 
-  def initialize(probability_distributions:)
-    @probability_distributions = probability_distributions.sort_by! { |pd| -pd.probability }
+class NextTokenGenerator
+  def initialize(probability_distribution:)
+    @probability_distribution = probability_distribution
   end
 
   def generate_next(context:)
-    highest_probability_ngram = @probability_distributions
-           .find { |ngram_prob| ngram_prob.ngram.start_with?(context) }
+    distribution = @probability_distribution.distribution_for(context)
+    return nil if distribution.tokens.empty?
 
-    return nil if highest_probability_ngram.nil?
-
-    highest_probability_ngram.ngram.last_token
+    distribution.next_token
   end
 end

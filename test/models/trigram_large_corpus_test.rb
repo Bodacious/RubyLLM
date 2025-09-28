@@ -9,7 +9,7 @@ class TrigramLargeCorpusTest < Minitest::Test
 
     sample_text = model.generate(prompt: "I cannot pretend to describe")
 
-    assert_equal "i cannot pretend to describe what i have no doubt of your own.", sample_text
+    assert_equal "i cannot pretend to describe what i have no ambition to lose my life on the ground.", sample_text
     refute_empty sample_text
   end
 
@@ -19,8 +19,9 @@ class TrigramLargeCorpusTest < Minitest::Test
     sample_text = model.generate(prompt: "and my first of those")
 
     assert_equal <<~STRING.chomp, sample_text
-      and my first of those whose dearest victor, do not know the names of the \
-      lake, which was to be the consolation of your own.
+      and my first of those whose names are recorded in story as the sun had \
+      recovered its warmth and rest only that i had been the favourite dream \
+      of my own heart.
     STRING
     refute_empty sample_text
   end
@@ -30,10 +31,9 @@ class TrigramLargeCorpusTest < Minitest::Test
 
     sample_text = model.generate(prompt: "but i was")
 
-    # THIS IS COMPLETELY GENERATED CONTENT!
-    assert_includes sample_text, "but i was unable to solve these questions,\
- but i was unable to solve these questions,\
- but i was unable to solve these questions"
+    assert_includes sample_text,
+                    "but i was not, as i was not, as i was not, as i was \
+not, as i was not, as i was not, as i was not"
     refute_empty sample_text
   end
 end
