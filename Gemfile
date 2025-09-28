@@ -4,8 +4,8 @@ source "https://rubygems.org"
 
 ruby file: "./.ruby-version"
 
-gem "pycall", "~> 1.5"
-gem "fiddle", "~> 1.1"
+gem "pycall", "~> 1.5", require: false
+gem "fiddle", "~> 1.1", require: false
 
 group :development, :test do
   gem "debug"
@@ -13,11 +13,10 @@ group :development, :test do
   gem "guard"
   gem "guard-minitest"
   gem 'rubocop', require: false
+  gem "rake", "~> 13.3"
 end
 
 group  :test do
   gem "mocha"
   gem "minitest", "~> 5.25"
 end
-
-gem "rake", "~> 13.3"
