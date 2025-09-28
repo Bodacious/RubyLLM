@@ -19,6 +19,9 @@ jobs:
         with:
           ruby-version: '3.4.5'
           bundler-cache: true
+        env:
+          BUNDLE_WITH: "test"
+          BUNDLE_WITHOUT: "development"
 
       - name: Set up Python
         uses: actions/setup-python@v5
