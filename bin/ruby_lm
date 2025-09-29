@@ -3,7 +3,11 @@
 
 $LOAD_PATH << File.expand_path('../models', __dir__)
 
+require 'bundler'
+Bundler.require(:development, :default)
+
 require 'trigram_large_corpus'
+require 'debug'
 
 sequence_length = ARGV[1].nil? ? 10_000 : ARGV[1].to_i
 puts TrigramLargeCorpus.new.generate(prompt: ARGV[0], sequence_length: sequence_length)
