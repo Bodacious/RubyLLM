@@ -5,7 +5,7 @@ class Corpus
 
   SENTENCE_REGEXP = /(?m)[\s\S]*?[.!?](?=\s|$)/
 
-  IGNORED_PUNCTUATION_REGEXP = /'|"|“|”|\r?\n/
+  IGNORED_PUNCTUATION_REGEXP = /"|“|”|\r?\n/
 
   def initialize(name: :simple)
     @name = name.to_sym
