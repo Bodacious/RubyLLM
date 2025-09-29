@@ -28,7 +28,7 @@ class ConditionalDistribution
 
   private
 
-  def apply_temperature_scaling!(temperature: @temperature)
+  def apply_temperature_scaling!
     raise ArgumentError, "temperature must be > 0" unless temperature.positive?
 
     # Convert probabilities to logits, scale, exponentiate
