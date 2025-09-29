@@ -2,7 +2,7 @@
 
 require 'bundler'
 require_relative '../lib/n_gram_model_builder'
-require_relative '../lib/corpus'
+require_relative '../lib/document'
 require_relative '../lib/next_token_generator'
 require_relative '../lib/word_tokenizer'
 require_relative '../lib/bpe_tokenizer'
@@ -14,7 +14,7 @@ class TrigramLargeCorpus
   NGRAM_SIZE = 3
 
   def initialize
-    corpus = Corpus.new(name: :frankenstein)
+    corpus = Document.new(name: :frankenstein)
     @tokenizer = BPETokenizer.new
     probability_distribution = NGramModelBuilder.new(
       tokens: corpus.samples.flat_map { |sample| @tokenizer.tokenize(sample) },

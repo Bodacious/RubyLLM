@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Corpus
+class Document
   require_relative 'tokenizer'
 
   SENTENCE_REGEXP = /(?m)[\s\S]*?[.!?](?=\s|$)/
@@ -15,7 +15,7 @@ class Corpus
   def samples = @samples.dup
 
   def read_corpus_file
-    File.read("./corpora/#{@name}_text.txt")
+    File.read("./documents/#{@name}_text.txt")
         .each_line
         .map do |string|
       string.gsub!(IGNORED_PUNCTUATION_REGEXP, '')
