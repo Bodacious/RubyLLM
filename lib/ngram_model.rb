@@ -31,9 +31,9 @@ class NGramModel < DelegateClass(Hash)
     contexts_with_ngrams = ngrams.group_by(&:context)
     distributions = {}
     contexts_with_ngrams.each do |(context, ngrams_for_context)|
-      total = ngrams_for_context.size
+      total = ngrams_for_context.size.to_f
       counts = ngrams_for_context.tally(&:next_token)
-      counts.transform_values! { |c| Rational(c, total) }
+      counts.transform_values! { |c| c / total }
       distributions[context] = ConditionalDistribution.new(context: context,
                                                            token_probs: counts)
     end

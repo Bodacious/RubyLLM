@@ -28,15 +28,14 @@ class ConditionalDistribution
 
   private
 
-  def apply_temperature_scaling!
-    logits = @token_probs.values.map { |probability| Math.log(probability) }
-    scaled = logits.map { |logit| Math.exp(Rational(logit, @temperature)) }
+  def apply_temperature_scaling!(temperature: @temperature)
+    raise ArgumentError, "temperature must be > 0" unless temperature.positive?
 
-    total = scaled.sum
-    normalised = scaled.map { |val| Rational(val, total) }
+    # Convert probabilities to logits, scale, exponentiate
+    scaled = @token_probs.transform_values! { |p| Math.exp(Math.log(p) / temperature) }
 
-    @token_probs.zip(normalised).map do |(ngram, _p), new_probability|
-      @token_probs[ngram] = new_probability
-    end
+    # Renormalise
+    total = scaled.values.sum
+    @token_probs = scaled.transform_values! { |v| v / total }
   end
 end
