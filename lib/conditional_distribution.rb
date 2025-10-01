@@ -29,13 +29,10 @@ class ConditionalDistribution
   private
 
   def apply_temperature_scaling!
-    raise ArgumentError, "temperature must be > 0" unless temperature.positive?
+    # Power transform: p^(1/T), then renormalise
+    scaled = @token_probs.transform_values { |p| p**(1.0 / @temperature) }
 
-    # Convert probabilities to logits, scale, exponentiate
-    scaled = @token_probs.transform_values! { |p| Math.exp(Math.log(p) / temperature) }
-
-    # Renormalise
     total = scaled.values.sum
-    @token_probs = scaled.transform_values! { |v| v / total }
+    @token_probs = scaled.transform_values { |v| v / total }
   end
 end
