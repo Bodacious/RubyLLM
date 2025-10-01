@@ -9,5 +9,5 @@ Bundler.require(:development, :default)
 require 'language_model'
 require 'debug'
 
-sequence_length = ARGV[1].nil? ? 100 : ARGV[1].to_i
+sequence_length = ARGV[1].nil? ? 10 : ARGV[1].to_i
 puts LanguageModel.new.generate(sequence_length: sequence_length)
