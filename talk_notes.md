@@ -7,13 +7,13 @@
 
 class LanguageModel
   DOCUMENT = 'the cat sat on the mat'
-  MAX_TOKENS = 10
+  DEFAULT_SEQUENCE_LENGTH = 10
 
   def initialize
     @probability_distributions = calculate_probability_distributions
   end
 
-  def generate(sequence_length: MAX_TOKENS)
+  def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
     Array.new(sequence_length) { generate_next_token }.join(' ')
   end
 
