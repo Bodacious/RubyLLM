@@ -4,8 +4,8 @@
 
 ## Looking for RubyLLM?
 
-https://github.com/crmne/ruby_llm
-https://rubyllm.com/
+- https://github.com/crmne/ruby_llm
+- https://rubyllm.com/
 
 
 ## WIP
