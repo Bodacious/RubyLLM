@@ -3,6 +3,7 @@ class Tokenizer
   def initialize(document:)
     @tokens = document.to_s.split
   end
+  delegate
   def tokens
     @tokens
   end
