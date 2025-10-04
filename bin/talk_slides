@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+for file in talk_slides/*.rb; do
+  echo "$file";
+  ruby -I talk_slides -r "$(basename "$file")" -e "puts LanguageModel.new.generate"
+done
