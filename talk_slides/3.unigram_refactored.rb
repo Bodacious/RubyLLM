@@ -1,7 +1,7 @@
 class Tokenizer
   attr_reader :tokens
-  def initialize(document:)
-    @tokens = document.to_s.split
+  def initialize(*samples)
+    @tokens = samples.flat_map { |sample| sample.to_s.split }
   end
 end
 class LanguageModel
@@ -23,7 +23,7 @@ class LanguageModel
   end
 
   def calculate_probability_distribution
-    tokens = Tokenizer.new(document: DOCUMENT).tokens
+    tokens = Tokenizer.new(DOCUMENT).tokens
     token_counts = tokens.tally
     total_token_count = token_counts.values.sum
     token_counts.transform_values do |count|

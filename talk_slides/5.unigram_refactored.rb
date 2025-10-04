@@ -1,7 +1,7 @@
 class Tokenizer
   attr_reader :tokens
-  def initialize(document:)
-    @tokens = document.to_s.split
+  def initialize(*samples)
+    @tokens = samples.flat_map { |sample| sample.to_s.split }
   end
 end
 
@@ -42,12 +42,12 @@ class LanguageModel
   protected
 
   def generate_next_token
-    @probability_distribution.max_by(&:last).first
+    @probability_distribution.max_by(&:probability).token
   end
 
   def calculate_probability_distribution
-    tokens = Tokenizer.new(document: DOCUMENT).tokens
-    token_counts = NGramCounter(tokens: tokens).ngram_counts
+    tokens = Tokenizer.new(DOCUMENT).tokens
+    token_counts = NGramCounter.new(tokens: tokens).ngram_counts
     ProbabilityDistribution.new(ngram_counts: token_counts).distribution
   end
 end
