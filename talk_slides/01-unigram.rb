@@ -18,4 +18,12 @@ sequence = Array.new(DEFAULT_SEQUENCE_LENGTH) do
   generate_next_token(probability_distribution)
 end
 
-puts sequence.join(' ')
+# Ignore the class and global here.
+# it's just so I can run all of these files via bin/talk_slides
+ $capture = sequence.join(' ')
+
+class LanguageModel
+  def generate
+    $capture
+  end
+end
