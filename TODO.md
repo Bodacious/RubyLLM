@@ -16,9 +16,35 @@
 - [ ] Transformers (stacks of attention → LLMs)
 - [ ] Self-attention (intuitive heatmap; causal mask)
 
-Demos to build in Ruby:
-- [ ] Simple unigram generation
-- [ ] Bigram/trigram predictions and generation
-- [ ] Sampling variants side-by-side
-- [ ] Perplexity on train vs hold-out
-- [ ] (Optional) tiny self-attention with a toy heatmap
+## Talk structure
+
+- [ ] Header slide
+- [ ] Introductions
+- [ ] Really simple unigram example
+
+  - Demonstrate the principle of computing the statistical structure of a sample of text
+  - Demonstrate how text can be broken up into individual "tokens"
+- [ ] Cleaned up unigram example
+  - [ ] Make the code cleaner, so that it's easier to abstract bits later
+- [ ] Bigram model 
+  - Introduce the idea of context. That if we want to get something meaningful back from a
+    model then we have to give it a more specific context to work within.
+  - Probability distributions are now calculated based on their context, rather than their total probability
+- [ ] Add BOS and EOS, special tokens with semantic meaning, that aren't necessarily words, but teach the model where text should probably begin and end
+- [ ] Extend bigram to trigram
+- [ ] Introduce larger corpus
+  - Demonstrate that the context size (n) becomes a limitation, because of the memory and training data required.
+- [ ] Tokenize the tokens
+  - We can use this to generate probabalistic content for other media types as well
+- [ ] Add sampling
+  - Discuss temperature, and how sampling can be used to generate unique content
+- This was what language models were for decades
+
+- Neural networks.
+  - What new innovation do neural nets bring?  
+  - Discuss the benefits brought by neural networks
+  - Discuss the limitations (context again?)
+
+- LLMs 
+  - Attention
+  - This time the context constraint is the size of the QKV matrices
