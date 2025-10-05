@@ -1,7 +1,10 @@
 class Tokenizer
-  attr_reader :tokens
-  def initialize(*samples)
-    @tokens = samples.flat_map { |sample| sample.to_s.split }
+  def tokenize(*samples)
+    samples.flat_map { |sample| sample.to_s.split }
+  end
+
+  def detokenize(*tokens)
+    tokens.join(' ')
   end
 end
 
@@ -17,11 +20,13 @@ class LanguageModel
   DEFAULT_SEQUENCE_LENGTH = 10
 
   def initialize
+    @tokenizer = Tokenizer.new
     @probability_distribution = calculate_probability_distribution
   end
 
   def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
-    Array.new(sequence_length) { generate_next_token }.join(' ')
+    sequence = Array.new(sequence_length) { generate_next_token }
+    @tokenizer.detokenize(sequence)
   end
 
   protected
@@ -31,7 +36,7 @@ class LanguageModel
   end
 
   def calculate_probability_distribution
-    tokens = Tokenizer.new(DOCUMENT).tokens
+    tokens = @tokenizer.tokenize(DOCUMENT)
     token_counts = NGramCounter.new(tokens: tokens).ngram_counts
     total_token_count = token_counts.values.sum
     token_counts.transform_values do |count|

@@ -8,19 +8,35 @@ class Document
     ]
   end
 end
+
 class Tokenizer
-  BOS = 'BOS'.freeze
-  EOS = 'EOS'.freeze
-  def tokenize(*samples)
-    samples.flat_map do |sample|
-      "#{BOS} #{sample.to_s.downcase} #{EOS}".split
-    end
+  require 'pycall/import'
+  include PyCall::Import
+
+  BOS = '!!!'
+  EOS = ' ``'
+
+  def initialize(encoding: 'cl100k_base')
+    pyimport :tiktoken
+    @encoder = tiktoken.get_encoding(encoding)
   end
 
-  def detokenize(*tokens)
-    tokens.reject { |token| [BOS, EOS].include?(token) }.join(' ')
+  def bos_token = @encoder.encode(BOS).first
+  def eos_token = @encoder.encode(EOS).first
+
+  def tokenize(*samples)
+    text = samples.map { |s| "#{BOS} #{s.downcase.strip}#{EOS}" }.join
+    Array(@encoder.encode(text))
+  end
+
+  # Decode token IDs back into text
+  def detokenize(tokens)
+    tokens.delete(bos_token)
+    tokens.delete(eos_token)
+    @encoder.decode(tokens)
   end
 end
+
 class NGramCounter
   attr_reader :ngram_counts
 
@@ -76,22 +92,19 @@ class LanguageModel
 
   def generate(prompt: ARGV[0], sequence_length: DEFAULT_SEQUENCE_LENGTH)
     sequence = @tokenizer.tokenize(prompt)[0..-2]
-    until sequence.last == Tokenizer::EOS
+    until sequence.last == @tokenizer.eos_token do
       break if sequence.length >= sequence_length
       next_token = generate_next_token(context: sequence.last(N - 1))
-      sequence << next_token
+      sequence.push next_token
     end
-    sequence.delete(Tokenizer::BOS)
-    sequence.delete(Tokenizer::EOS)
-    sequence.join(' ')
+    @tokenizer.detokenize(sequence)
   end
 
   protected
 
   def generate_next_token(context:)
     candidates = @probability_distribution[context]
-
-    return Tokenizer::EOS if candidates.nil?
+    return @tokenizer.eos_token if candidates.nil?
 
     candidates.max_by(&:probability).token
   end

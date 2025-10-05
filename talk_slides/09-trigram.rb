@@ -11,13 +11,14 @@ end
 class Tokenizer
   BOS = 'BOS'.freeze
   EOS = 'EOS'.freeze
-
-  attr_reader :tokens
-
-  def initialize(document:)
-    @tokens = document.samples.flat_map do |sample|
+  def tokenize(*samples)
+    samples.flat_map do |sample|
       "#{BOS} #{sample.to_s.downcase} #{EOS}".split
     end
+  end
+
+  def detokenize(*tokens)
+    tokens.reject { |token| [BOS, EOS].include?(token) }.join(' ')
   end
 end
 
@@ -70,6 +71,7 @@ class LanguageModel
   DEFAULT_SEQUENCE_LENGTH = 10
   N = 3
   def initialize
+    @tokenizer = Tokenizer.new
     @probability_distribution = calculate_probability_distribution
   end
 
@@ -79,9 +81,7 @@ class LanguageModel
       next_token = generate_next_token(context: sequence.last(N - 1))
       sequence << next_token
     end
-    sequence.delete(Tokenizer::BOS)
-    sequence.delete(Tokenizer::EOS)
-    sequence.join(' ')
+    @tokenizer.detokenize(sequence)
   end
 
   protected
@@ -89,13 +89,13 @@ class LanguageModel
   def generate_next_token(context:)
     candidates = @probability_distribution[context]
 
-    return '' if candidates.nil?
+    return Tokenizer::EOS if candidates.nil?
 
     candidates.max_by(&:probability).token
   end
 
   def calculate_probability_distribution
-    tokens = Tokenizer.new(document: Document.new).tokens
+    tokens = @tokenizer.tokenize(Document.new.samples)
     counts = NGramCounter.new(tokens: tokens, n: N).ngram_counts
     ProbabilityDistribution.new(ngram_counts: counts).distribution
   end
