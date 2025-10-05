@@ -1,4 +1,6 @@
-DOCUMENT = 'the cat sat on the mat'
+# frozen_string_literal: true
+
+DOCUMENT = "the cat sat on the mat"
 DEFAULT_SEQUENCE_LENGTH = 10
 
 tokens = DOCUMENT.split
@@ -20,7 +22,7 @@ end
 
 # Ignore the class and global here.
 # it's just so I can run all of these files via bin/talk_slides
- $capture = sequence.join(' ')
+$capture = sequence.join(" ")
 
 class LanguageModel
   def generate

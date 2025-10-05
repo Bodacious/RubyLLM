@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 class Tokenizer
   def tokenize(*samples)
     samples.flat_map { |sample| sample.to_s.split }
   end
 
   def detokenize(*tokens)
-    tokens.join(' ')
+    tokens.join(" ")
   end
 end
 
@@ -47,18 +49,18 @@ class ProbabilityDistribution
   def distribution
     return @distribution if defined?(@distribution)
 
-    @distribution = @ngram_counts.map do |context, target_counts|
+    @distribution = @ngram_counts.to_h do |context, target_counts|
       total = target_counts.values.sum
       target_probabilities = target_counts.map do |token, count|
         TokenProbability[token, count / total.to_f]
       end
       [context, target_probabilities]
-    end.to_h
+    end
   end
 end
 
 class LanguageModel
-  DOCUMENT = 'the cat sat on the mat'
+  DOCUMENT = "the cat sat on the mat"
   DEFAULT_SEQUENCE_LENGTH = 10
   N = 2
   def initialize
@@ -67,7 +69,7 @@ class LanguageModel
   end
 
   def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
-    sequence = ['the']
+    sequence = ["the"]
     Array.new(sequence_length) do
       next_token = generate_next_token(context: sequence.last)
       sequence << next_token
@@ -79,7 +81,7 @@ class LanguageModel
 
   def generate_next_token(context:)
     candidates = @probability_distribution[context]
-    return '' if candidates.nil?
+    return "" if candidates.nil?
 
     candidates.max_by(&:probability).token
   end

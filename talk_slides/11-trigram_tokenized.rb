@@ -2,6 +2,7 @@
 
 class Document
   attr_reader :samples
+
   def initialize
     @samples = [
       "The cat sat on the mat"
@@ -10,13 +11,13 @@ class Document
 end
 
 class Tokenizer
-  require 'pycall/import'
+  require "pycall/import"
   include PyCall::Import
 
-  BOS = '!!!'
-  EOS = ' ``'
+  BOS = "!!!"
+  EOS = " ``"
 
-  def initialize(encoding: 'cl100k_base')
+  def initialize(encoding: "cl100k_base")
     pyimport :tiktoken
     @encoder = tiktoken.get_encoding(encoding)
   end
@@ -72,13 +73,13 @@ class ProbabilityDistribution
   def distribution
     return @distribution if defined?(@distribution)
 
-    @distribution = @ngram_counts.map do |context, target_counts|
+    @distribution = @ngram_counts.to_h do |context, target_counts|
       total = target_counts.values.sum
       target_probabilities = target_counts.map do |token, count|
         TokenProbability[token, count / total.to_f]
       end
       [context, target_probabilities]
-    end.to_h
+    end
   end
 end
 
@@ -92,8 +93,9 @@ class LanguageModel
 
   def generate(prompt: ARGV[0], sequence_length: DEFAULT_SEQUENCE_LENGTH)
     sequence = @tokenizer.tokenize(prompt)[0..-2]
-    until sequence.last == @tokenizer.eos_token do
+    until sequence.last == @tokenizer.eos_token
       break if sequence.length >= sequence_length
+
       next_token = generate_next_token(context: sequence.last(N - 1))
       sequence.push next_token
     end

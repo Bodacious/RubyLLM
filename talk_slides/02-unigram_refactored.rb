@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class LanguageModel
-  DOCUMENT = 'the cat sat on the mat'
+  DOCUMENT = "the cat sat on the mat"
   DEFAULT_SEQUENCE_LENGTH = 10
 
   def initialize
@@ -7,7 +9,7 @@ class LanguageModel
   end
 
   def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
-    Array.new(sequence_length) { generate_next_token }.join(' ')
+    Array.new(sequence_length) { generate_next_token }.join(" ")
   end
 
   protected

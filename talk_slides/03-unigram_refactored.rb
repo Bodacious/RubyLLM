@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 class Tokenizer
   def tokenize(*samples)
     samples.flat_map { |sample| sample.to_s.split }
   end
 
   def detokenize(*tokens)
-    tokens.join(' ')
+    tokens.join(" ")
   end
 end
 
 class LanguageModel
-  DOCUMENT = 'the cat sat on the mat'
+  DOCUMENT = "the cat sat on the mat"
   DEFAULT_SEQUENCE_LENGTH = 10
 
   def initialize
