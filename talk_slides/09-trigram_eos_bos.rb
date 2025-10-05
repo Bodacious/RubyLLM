@@ -1,31 +1,11 @@
 # frozen_string_literal: true
 
-class Document
-  attr_reader :samples
-
-  def initialize
-    @samples = [
-      "The cat sat on the mat"
-    ]
-  end
-end
-
 class Tokenizer
-  BOS = "BOS"
-  EOS = "EOS"
   def tokenize(*samples)
-    samples.flat_map do |sample|
-      "#{bos_token} #{sample.to_s.downcase} #{eos_token}".split
-    end
+    samples.flat_map { |sample| sample.to_s.split }
   end
-
-  def bos_token = BOS
-
-  def eos_token = EOS
 
   def detokenize(tokens)
-    tokens.delete(bos_token)
-    tokens.delete(eos_token)
     tokens.join(" ")
   end
 end
@@ -46,9 +26,9 @@ class NGramCounter
   protected
 
   def count_ngrams(tokens)
-    tokens.each_cons(@n) do |ngrams|
-      context = ngrams.first
-      target = ngrams.last
+    tokens.each_cons(@n) do |ngram|
+      context = ngram[0..-2]
+      target = ngram.last
       @ngram_counts[context][target] += 1
     end
     @ngram_counts
@@ -76,19 +56,19 @@ class ProbabilityDistribution
 end
 
 class LanguageModel
+  DOCUMENT = "the cat sat on the mat"
   DEFAULT_SEQUENCE_LENGTH = 10
-  N = 2
+  N = 3
   def initialize
     @tokenizer = Tokenizer.new
     @probability_distribution = calculate_probability_distribution
   end
 
   def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
-    sequence = [Tokenizer::BOS]
-    until sequence.last == Tokenizer::EOS
-      break if sequence.length >= sequence_length
-
-      next_token = generate_next_token(context: sequence.last)
+    sequence = @tokenizer.tokenize("BOS the")
+    until sequence.length >= sequence_length
+      break if sequence.last == "EOS"
+      next_token = generate_next_token(context: sequence.last(N - 1))
       sequence << next_token
     end
     @tokenizer.detokenize(sequence)
@@ -98,13 +78,14 @@ class LanguageModel
 
   def generate_next_token(context:)
     candidates = @probability_distribution[context]
-    return Tokenizer::EOS if Array(candidates).empty?
+    return "EOS" if Array(candidates).empty?
 
     candidates.max_by(&:probability).token
   end
 
   def calculate_probability_distribution
-    tokens = @tokenizer.tokenize(*Document.new.samples)
+    document = "BOS #{DOCUMENT} EOS"
+    tokens = @tokenizer.tokenize(document)
     counts = NGramCounter.new(tokens: tokens, n: N).ngram_counts
     ProbabilityDistribution.new(ngram_counts: counts).distribution
   end

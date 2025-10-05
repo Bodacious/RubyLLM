@@ -47,8 +47,8 @@ class NGramCounter
 
   def count_ngrams(tokens)
     tokens.each_cons(@n) do |ngram|
-      context = ngram[0..-2]  # first n-1 tokens
-      target  = ngram[-1]     # last token
+      context = ngram[0..-2]
+      target = ngram.last
       @ngram_counts[context][target] += 1
     end
     @ngram_counts
@@ -83,8 +83,8 @@ class LanguageModel
     @probability_distribution = calculate_probability_distribution
   end
 
-  def generate(prompt: ARGV[0], sequence_length: DEFAULT_SEQUENCE_LENGTH)
-    sequence = @tokenizer.tokenize(prompt)[0..-2]
+  def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
+    sequence = @tokenizer.tokenize("the")[0..-2]
     until sequence.last == Tokenizer::EOS
       break if sequence.length >= sequence_length
 
@@ -98,7 +98,6 @@ class LanguageModel
 
   def generate_next_token(context:)
     candidates = @probability_distribution[context]
-
     return Tokenizer::EOS if Array(candidates).empty?
 
     candidates.max_by(&:probability).token

@@ -42,10 +42,6 @@ class ProbabilityDistribution
     @ngram_counts = ngram_counts
   end
 
-  def [](context)
-    distribution.fetch(context, [])
-  end
-
   def distribution
     return @distribution if defined?(@distribution)
 
@@ -69,7 +65,7 @@ class LanguageModel
   end
 
   def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
-    sequence = ["the"]
+    sequence = @tokenizer.tokenize("the")
     Array.new(sequence_length) do
       next_token = generate_next_token(context: sequence.last)
       sequence << next_token

@@ -64,7 +64,7 @@ class LanguageModel
   end
 
   def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
-    sequence = ["the", "cat"]
+    sequence = @tokenizer.tokenize("the cat")
     Array.new(sequence_length) do
       next_token = generate_next_token(context: sequence.last(N - 1))
       sequence << next_token
