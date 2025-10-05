@@ -5,7 +5,7 @@ class Tokenizer
     samples.flat_map { |sample| sample.to_s.split }
   end
 
-  def detokenize(*tokens)
+  def detokenize(tokens)
     tokens.join(" ")
   end
 end
@@ -66,7 +66,9 @@ class LanguageModel
 
   def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
     sequence = ["BOS"]
-    Array.new(sequence_length) do
+    until sequence.last == "EOS"
+      break if sequence.length >= sequence_length
+
       next_token = generate_next_token(context: sequence.last)
       sequence << next_token
     end

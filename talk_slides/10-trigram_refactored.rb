@@ -15,12 +15,18 @@ class Tokenizer
   EOS = "EOS"
   def tokenize(*samples)
     samples.flat_map do |sample|
-      "#{BOS} #{sample.to_s.downcase} #{EOS}".split
+      "#{bos_token} #{sample.to_s.downcase} #{eos_token}".split
     end
   end
 
-  def detokenize(*tokens)
-    tokens.reject { |token| [BOS, EOS].include?(token) }.join(" ")
+  def bos_token = BOS
+
+  def eos_token = EOS
+
+  def detokenize(tokens)
+    tokens.delete(bos_token)
+    tokens.delete(eos_token)
+    tokens.join(" ")
   end
 end
 
@@ -85,9 +91,7 @@ class LanguageModel
       next_token = generate_next_token(context: sequence.last(N - 1))
       sequence << next_token
     end
-    sequence.delete(Tokenizer::BOS)
-    sequence.delete(Tokenizer::EOS)
-    sequence.join(" ")
+    @tokenizer.detokenize(sequence)
   end
 
   protected

@@ -3,9 +3,10 @@
 class Document
   IGNORED_PUNCTUATION_REGEXP = /(\[|\]"|“|”|’|\r?\n)/
   # Matches tokens in text:
-  # - (?<word>): complete words; allows internal apostrophes or dashes (don’t, mother-in-law)
-  # - (?<term>): terminal punctuation returned as its own token (full stop or exclamation)
-  # - (?<pause>): commas and semicolons as their own tokens
+  # - 1st capture: complete words; allows internal apostrophes or dashes (don’t, mother-in-law)
+  # - 2nd capture: terminal punctuation returned as its own token (full stop or exclamation)
+  # - 3rd capture: commas and semicolons as their own tokens
+  # - 4th capture: spaces
   # Notes:
   # - Quotes (straight/curly) and square brackets are ignored (not matched)
   # - Underscores are ignored (not part of words)
@@ -18,6 +19,8 @@ class Document
     (?:[.!])
     |
     (?:[,;])
+    |
+    (?:\s+)
   /x
 
   attr_reader :samples
@@ -26,7 +29,7 @@ class Document
     @samples = File.readlines("documents/#{name}.txt").lazy.map do |line|
       line.gsub!(IGNORED_PUNCTUATION_REGEXP, "")
       line.strip!
-      line.scan(WORD_REGEX).join(" ")
+      line.scan(WORD_REGEX).join
     end.reject(&:empty?)
   end
 end
@@ -51,7 +54,6 @@ class Tokenizer
     Array(@encoder.encode(text))
   end
 
-  # Decode token IDs back into text
   def detokenize(tokens)
     tokens.delete(bos_token)
     tokens.delete(eos_token)

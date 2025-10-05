@@ -5,7 +5,7 @@ class Tokenizer
     samples.flat_map { |sample| sample.to_s.split }
   end
 
-  def detokenize(*tokens)
+  def detokenize(tokens)
     tokens.join(" ")
   end
 end
