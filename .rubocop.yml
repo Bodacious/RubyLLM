@@ -4,3 +4,15 @@ AllCops:
 plugins:
   - rubocop-rake
   - rubocop-minitest
+
+Naming/FileName:
+  Enabled: false
+
+Naming/MethodParameterName:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+Style/GlobalVars:
+  Enabled: false
