@@ -5,6 +5,12 @@ plugins:
   - rubocop-rake
   - rubocop-minitest
 
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
 Naming/FileName:
   Enabled: false
 
