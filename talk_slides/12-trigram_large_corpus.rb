@@ -129,7 +129,7 @@ class LanguageModel
 
   def generate_next_token(context:)
     candidates = @probability_distribution[context]
-    return @tokenizer.eos_token if candidates.nil?
+    return @tokenizer.eos_token if Array(candidates).empty?
 
     candidates.max_by(&:probability).token
   end

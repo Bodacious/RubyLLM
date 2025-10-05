@@ -1,12 +1,26 @@
 # frozen_string_literal: true
 
 class Document
+  IGNORED_PUNCTUATION_REGEXP = /(\[|\]"|“|”|’|\r?\n)/
+  WORD_REGEX = /
+    (?:
+      [[:alnum:]]+
+      (?:['-][[:alnum:]]+)*
+    )
+    |
+    (?:[.!])
+    |
+    (?:[,;])
+  /x
+
   attr_reader :samples
 
-  def initialize
-    @samples = [
-      "The cat sat on the mat"
-    ]
+  def initialize(name = "simple_text")
+    @samples = File.readlines("documents/#{name}.txt").lazy.map do |line|
+      line.gsub!(IGNORED_PUNCTUATION_REGEXP, "")
+      line.strip!
+      line.scan(WORD_REGEX).join(" ")
+    end.reject(&:empty?)
   end
 end
 
@@ -30,7 +44,6 @@ class Tokenizer
     Array(@encoder.encode(text))
   end
 
-  # Decode token IDs back into text
   def detokenize(tokens)
     tokens.delete(bos_token)
     tokens.delete(eos_token)
@@ -43,10 +56,6 @@ class NGramCounter
 
   def initialize(tokens:, n:)
     @n = n
-    # Creates a nested Hash, with default value: 0
-    # e.g.
-    #   @ngram_counts['foo']['bar'] # => 0
-    #   @ngram_counts # => { 'foo' => { 'bar' => 0 }}
     @ngram_counts = Hash.new { |h, k| h[k] = Hash.new(0) }
     count_ngrams(tokens)
   end
@@ -55,11 +64,10 @@ class NGramCounter
 
   def count_ngrams(tokens)
     tokens.each_cons(@n) do |ngram|
-      context = ngram[0..-2]  # first n-1 tokens
-      target  = ngram[-1]     # last token
+      context = ngram[0..-2]
+      target  = ngram[-1]
       @ngram_counts[context][target] += 1
     end
-    @ngram_counts
   end
 end
 
@@ -84,9 +92,12 @@ class ProbabilityDistribution
 end
 
 class LanguageModel
-  DEFAULT_SEQUENCE_LENGTH = 10
+  DEFAULT_SEQUENCE_LENGTH = (ARGV[1] || 10).to_i
+  TEMPERATURE = (ARGV[2] || 1.0).to_f
   N = 3
+
   def initialize
+    @document = Document.new("frankenstein_text")
     @tokenizer = Tokenizer.new
     @probability_distribution = calculate_probability_distribution
   end
@@ -108,11 +119,26 @@ class LanguageModel
     candidates = @probability_distribution[context]
     return @tokenizer.eos_token if Array(candidates).empty?
 
-    candidates.max_by(&:probability).token
+    adjusted = candidates.to_h do |c|
+      scaled = Math.exp(Math.log(c.probability) / TEMPERATURE)
+      [c.token, scaled]
+    end
+
+    total = adjusted.values.sum
+    normalized = adjusted.transform_values { |v| v / total }
+
+    pick = rand
+    cumulative = 0.0
+    normalized.each do |token, prob|
+      cumulative += prob
+      return token if pick <= cumulative
+    end
+
+    candidates.last.token
   end
 
   def calculate_probability_distribution
-    tokens = @tokenizer.tokenize(*Document.new.samples)
+    tokens = @tokenizer.tokenize(*@document.samples)
     counts = NGramCounter.new(tokens: tokens, n: N).ngram_counts
     ProbabilityDistribution.new(ngram_counts: counts).distribution
   end

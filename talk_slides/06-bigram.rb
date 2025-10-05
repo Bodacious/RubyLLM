@@ -81,7 +81,7 @@ class LanguageModel
 
   def generate_next_token(context:)
     candidates = @probability_distribution[context]
-    return "" if candidates.nil?
+    return "" if Array(candidates).empty?
 
     candidates.max_by(&:probability).token
   end
