@@ -85,8 +85,8 @@ class LanguageModel
 
   def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
     sequence = @tokenizer.tokenize("the")[0..-2]
-    until sequence.last == Tokenizer::EOS
-      break if sequence.length >= sequence_length
+    until sequence.length >= sequence_length
+      break if sequence.last == Tokenizer::EOS
 
       next_token = generate_next_token(context: sequence.last(N - 1))
       sequence << next_token
