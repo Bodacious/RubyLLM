@@ -91,8 +91,8 @@ class LanguageModel
     @probability_distribution = calculate_probability_distribution
   end
 
-  def generate(prompt: ARGV[0], sequence_length: DEFAULT_SEQUENCE_LENGTH)
-    sequence = @tokenizer.tokenize(prompt)[0..-2]
+  def generate(sequence_length: DEFAULT_SEQUENCE_LENGTH)
+    sequence = @tokenizer.tokenize("the")[0..-2]
     until sequence.last == @tokenizer.eos_token
       break if sequence.length >= sequence_length
 
