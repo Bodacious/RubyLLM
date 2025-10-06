@@ -2,14 +2,6 @@
 
 class Document
   IGNORED_PUNCTUATION_REGEXP = /(\[|\]"|“|”|’|\r?\n)/
-  # Matches tokens in text:
-  # - 1st capture: complete words; allows internal apostrophes or dashes (don’t, mother-in-law)
-  # - 2nd capture: terminal punctuation returned as its own token (full stop or exclamation)
-  # - 3rd capture: commas and semicolons as their own tokens
-  # - 4th capture: spaces
-  # Notes:
-  # - Quotes (straight/curly) and square brackets are ignored (not matched)
-  # - Underscores are ignored (not part of words)
   WORD_REGEX = /
     (?:
       [[:alnum:]]+
@@ -101,39 +93,22 @@ class ProbabilityDistribution
   end
 end
 
-class TokenGenerator
-  def initialize(eos_token:, probability_distribution: {}, temperature: 1.0)
-    @eos_token = eos_token
+class NextTokenGenerator
+  def initialize(probability_distribution:, eos_token:, n:)
     @probability_distribution = probability_distribution
-    @temperature = temperature
+    @eos_token = eos_token
+    @n = n
   end
 
-  def next_token(context)
+  def generate(context:)
     candidates = @probability_distribution[context]
     return @eos_token if Array(candidates).empty?
 
-    sample(candidates)
-  end
-
-  private
-
-  def sample(candidates)
-    # Apply temperature scaling
-    adjusted = candidates.to_h do |c|
-      scaled = Math.exp(Math.log(c.probability) / @temperature)
-      [c.token, scaled]
-    end
-
-    # Normalize to probabilities that sum to 1
-    total = adjusted.values.sum
-    normalized = adjusted.transform_values { |v| v / total }
-
-    # Weighted random draw
     pick = rand
     cumulative = 0.0
-    normalized.each do |token, prob|
-      cumulative += prob
-      return token if pick <= cumulative
+    candidates.each do |c|
+      cumulative += c.probability
+      return c.token if pick <= cumulative
     end
 
     candidates.last.token
@@ -142,17 +117,16 @@ end
 
 class LanguageModel
   DEFAULT_SEQUENCE_LENGTH = (ARGV[1] || 10).to_i
-  TEMPERATURE = (ARGV[2] || 1.0).to_f
   N = 3
 
   def initialize
     @document = Document.new("frankenstein_text")
     @tokenizer = Tokenizer.new
     @probability_distribution = calculate_probability_distribution
-    @generator = TokenGenerator.new(
+    @next_token_generator = NextTokenGenerator.new(
       probability_distribution: @probability_distribution,
       eos_token: @tokenizer.eos_token,
-      temperature: TEMPERATURE
+      n: N
     )
   end
 
@@ -161,13 +135,13 @@ class LanguageModel
     until sequence.last == @tokenizer.eos_token
       break if sequence.length >= sequence_length
 
-      next_token = @generator.next_token(sequence.last(N - 1))
-      sequence.push(next_token)
+      next_token = @next_token_generator.generate(context: sequence.last(N - 1))
+      sequence.push next_token
     end
     @tokenizer.detokenize(sequence)
   end
 
-  private
+  protected
 
   def calculate_probability_distribution
     tokens = @tokenizer.tokenize(*@document.samples)

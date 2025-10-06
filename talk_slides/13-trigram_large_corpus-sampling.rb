@@ -2,14 +2,6 @@
 
 class Document
   IGNORED_PUNCTUATION_REGEXP = /(\[|\]"|“|”|’|\r?\n)/
-  # Matches tokens in text:
-  # - 1st capture: complete words; allows internal apostrophes or dashes (don’t, mother-in-law)
-  # - 2nd capture: terminal punctuation returned as its own token (full stop or exclamation)
-  # - 3rd capture: commas and semicolons as their own tokens
-  # - 4th capture: spaces
-  # Notes:
-  # - Quotes (straight/curly) and square brackets are ignored (not matched)
-  # - Underscores are ignored (not part of words)
   WORD_REGEX = /
     (?:
       [[:alnum:]]+
@@ -103,7 +95,6 @@ end
 
 class LanguageModel
   DEFAULT_SEQUENCE_LENGTH = (ARGV[1] || 10).to_i
-  TEMPERATURE = (ARGV[2] || 1.0).to_f
   N = 3
 
   def initialize
@@ -129,19 +120,11 @@ class LanguageModel
     candidates = @probability_distribution[context]
     return @tokenizer.eos_token if Array(candidates).empty?
 
-    adjusted = candidates.to_h do |c|
-      scaled = Math.exp(Math.log(c.probability) / TEMPERATURE)
-      [c.token, scaled]
-    end
-
-    total = adjusted.values.sum
-    normalized = adjusted.transform_values { |v| v / total }
-
     pick = rand
     cumulative = 0.0
-    normalized.each do |token, prob|
-      cumulative += prob
-      return token if pick <= cumulative
+    candidates.each do |c|
+      cumulative += c.probability
+      return c.token if pick <= cumulative
     end
 
     candidates.last.token
